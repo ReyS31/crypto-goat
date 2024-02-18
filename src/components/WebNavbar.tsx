@@ -1,33 +1,91 @@
-"use client"
+"use client";
+import { logoFont, regularFont } from "@/utils/fonts";
+import { useTheme } from "next-themes";
 import Image from "next/image";
-import { useState } from "react";
-import { Navbar, Container, NavbarBrand, Nav, NavLink } from "react-bootstrap";
+import {
+  Navbar,
+  Container,
+  NavbarBrand,
+  Nav,
+  NavLink,
+} from "react-bootstrap";
+import AuthButton from "./Button/AuthButton";
 
 export default function WebNavbar() {
-    const [isDark, setIsDark] = useState<boolean>(true);
-    return <Navbar className="bg-white justify-content-between" style={{
-        paddingTop: "10px",
-        paddingBottom: "10px"
-    }}>
+  const { theme, setTheme } = useTheme();
+
+  const toggle = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  return (
+    <header>
+      <Navbar
+        className={
+          theme === "dark"
+            ? "card-dark-custom justify-content-between"
+            : "bg-white justify-content-between"
+        }
+        style={{
+          paddingTop: "10px",
+          paddingBottom: "10px",
+        }}
+      >
         <Container>
-            <NavbarBrand href="asdasd">
-                <Image
-                    src="/logo.svg"
-                    className="d-inline-block align-top"
-                    alt="Crypto Goat logo"
-                    width={30}
-                    height={30}
-                    priority
-                />
-                {' '}
-                Crypto Goat
-            </NavbarBrand>
+          <NavbarBrand href="/">
+            <Image
+              src={theme === "dark" ? "/dark_logo.svg" : "/logo.svg"}
+              className="d-inline-block align-top"
+              alt="Crypto Goat logo"
+              width={30}
+              height={30}
+              priority
+            />
+            <span
+              className={`h5 ${logoFont.className} px-1 ${
+                theme === "dark" ? "text-white" : "text-custom"
+              }`}
+              style={{ lineHeight: "24px" }}
+            >
+              Coin Goat
+            </span>
+          </NavbarBrand>
         </Container>
-        <Nav className="me-auto my-2 my-lg-0"
-            style={{ maxHeight: '100px' }}
-            navbarScroll>
-            <NavLink href="#action1">Home</NavLink>
-            <NavLink href="#action2">Link</NavLink>
+        <Nav
+          className="me-auto my-2 my-lg-0 gap-4"
+          style={{ maxHeight: "100px" }}
+          navbarScroll
+        >
+          <NavLink
+            href="/market"
+            className={`d-inline-block sub1 ${regularFont.className} ${
+              theme === "dark" ? "text-white" : "text-custom"
+            }`}
+          >
+            Market
+          </NavLink>
+          <NavLink
+            href="#action2"
+            className={`d-inline-block sub1 ${regularFont.className} ${
+              theme === "dark" ? "text-white" : "text-custom"
+            }`}
+          >
+            Watchlist
+          </NavLink>
+
+          <Image
+            src={theme === "dark" ? "/sun_toggle.svg" : "/moon_toggle.svg"}
+            alt="Theme Switcher"
+            width={20}
+            height={20}
+            className="mt-2 mx-2"
+            priority
+            onClick={toggle}
+          />
+
+          <AuthButton />
         </Nav>
-    </Navbar>;
+      </Navbar>
+    </header>
+  );
 }
