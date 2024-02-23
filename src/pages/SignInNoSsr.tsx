@@ -1,7 +1,9 @@
-"use client";
+"use client"
+
+import getTheme from "@/lib/getTheme";
 import { mediumFont, regularFont } from "@/utils/fonts";
 import { signIn } from "next-auth/react";
-import { useTheme } from "next-themes";
+import { useState } from "react";
 import {
   Button,
   Col,
@@ -14,13 +16,14 @@ import {
   Stack,
 } from "react-bootstrap";
 
-export default function SignInNoSsr() {
-  const { theme } = useTheme();
+export default function SignInNoSsr({theme}: {theme:string}) {
   const containerClass = {
     borderRadius: "12px",
     background: theme === "dark" ? "#0D0D0D" : "#FFFFFF",
     color: theme === "dark" ? "#FFFFFF" : "#121F3E",
   };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
     <main
@@ -62,6 +65,8 @@ export default function SignInNoSsr() {
               <FormLabel>Email</FormLabel>
               <FormControl
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 style={{
                   ...containerClass,
                   height: "48px",
@@ -73,6 +78,8 @@ export default function SignInNoSsr() {
               <FormLabel>Password</FormLabel>
               <FormControl
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 style={{
                   ...containerClass,
                   height: "48px",
@@ -80,7 +87,19 @@ export default function SignInNoSsr() {
                 }}
               />
             </FormGroup>
-            <Button style={{width:"100%"}} variant="primary" onClick={() => signIn('credentials')}>Sign In</Button>
+            <Button
+              style={{ width: "100%" }}
+              variant="primary"
+              onClick={() =>
+                signIn("credentials", {
+                  redirect: true,
+                  email,
+                  password,
+                })
+              }
+            >
+              Sign In
+            </Button>
           </Form>
         </Container>
       </Stack>

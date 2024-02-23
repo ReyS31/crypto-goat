@@ -3,14 +3,23 @@
 import { regularFont } from "@/utils/fonts";
 import { signOut, useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 
 export default function AuthButton() {
   const { data } = useSession();
   const { push } = useRouter();
 
   if (data === undefined) {
-    return <></>;
+    return (
+      <Button
+        variant="danger"
+        className={`d-inline-block h6 ${regularFont.className} px-4`}
+        onClick={() => {}}
+        disabled
+      >
+        Loading...
+      </Button>
+    );
   }
 
   if (data && data.authenticated) {

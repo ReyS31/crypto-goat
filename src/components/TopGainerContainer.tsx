@@ -47,7 +47,7 @@ const TopGainerContainer = ({ theme }: TopGainerContainerProps) => {
   ];
 
   return (
-    <Container fluid style={containerClass} className="p-4 mt-3">
+    <Container fluid style={containerClass} className="p-4">
       <div
         style={{
           display: "flex",

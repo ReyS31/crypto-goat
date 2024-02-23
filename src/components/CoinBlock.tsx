@@ -3,6 +3,7 @@ import { semiboldFont, mediumFont } from "@/utils/fonts";
 import Image from "next/image";
 import { Row, Col } from "react-bootstrap";
 import PercentageTag from "./PercentageTag";
+import Link from "next/link";
 
 type CoinBlockProps = {
   coin: Coin;
@@ -26,9 +27,10 @@ const CoinBlock = ({ coin, theme }: CoinBlockProps) => {
           style={{ borderRadius: "50%" }}
           priority
         />
-        <span
+        <Link
+          href={`/market/${coin.symbol}`}
           className={`h6 ${semiboldFont.className}`}
-          style={{ marginLeft: "12px" }}
+          style={{ marginLeft: "12px", textDecoration: "none" }}
         >
           {coin.name}
           <span
@@ -43,7 +45,7 @@ const CoinBlock = ({ coin, theme }: CoinBlockProps) => {
           >
             {coin.symbol}
           </span>
-        </span>
+        </Link>
       </Col>
       <Col
         style={{
@@ -54,7 +56,7 @@ const CoinBlock = ({ coin, theme }: CoinBlockProps) => {
         }}
       >
         <span className={`sub1 ${semiboldFont.className}`}>${coin.price}</span>
-        <PercentageTag changes={coin.changes} font={semiboldFont} />
+        <PercentageTag size="sub1" changes={coin.changes} font={semiboldFont} />
       </Col>
     </Row>
   );

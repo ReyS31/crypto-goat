@@ -1,22 +1,17 @@
 "use client";
+
 import { logoFont, regularFont } from "@/utils/fonts";
-import { useTheme } from "next-themes";
 import Image from "next/image";
-import {
-  Navbar,
-  Container,
-  NavbarBrand,
-  Nav,
-  NavLink,
-} from "react-bootstrap";
+import { Navbar, Container, NavbarBrand, Nav, NavLink } from "react-bootstrap";
 import AuthButton from "./Button/AuthButton";
+import getTheme from "@/lib/getTheme";
 
-export default function WebNavbar() {
-  const { theme, setTheme } = useTheme();
-
-  const toggle = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
+export default function WebNavbar({ theme }: { theme: string }) {
+  function changeTheme() {
+    fetch(`/api/theme?theme=${theme === "dark" ? "light" : "dark"}`).then(
+      (res) => window.location.reload()
+    );
+  }
 
   return (
     <header>
@@ -80,7 +75,7 @@ export default function WebNavbar() {
             height={20}
             className="mt-2 mx-2"
             priority
-            onClick={toggle}
+            onClick={() => changeTheme()}
           />
 
           <AuthButton />

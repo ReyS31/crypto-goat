@@ -1,10 +1,7 @@
-import { CommonComponentProps } from "@/types";
 import { semiboldFont, mediumFont } from "@/utils/fonts";
-import Image from "next/image";
-import Link from "next/link";
 import { Container, Row, Col } from "react-bootstrap";
 
-const WatchlistCard = ({ coin, theme }: CommonComponentProps) => {
+const WatchlistCardShimmer = ({ theme }: { theme: string }) => {
   return (
     <Container
       className={`p-4 ${theme === "dark" ? "card-dark-custom" : "bg-white"}`}
@@ -17,21 +14,15 @@ const WatchlistCard = ({ coin, theme }: CommonComponentProps) => {
             alignItems: "end",
           }}
         >
-          <Image
-            src={`/coins/${coin.symbol}.svg`}
-            className="d-inline-block align-top"
-            alt="Crypto Goat logo"
-            width={40}
-            height={40}
-            style={{ borderRadius: "50%" }}
-            priority
-          />
-          <Link
-            href={`/market/${coin.symbol}`}
+          <div
+            className={`d-inline-block align-top ${theme === "dark" ? "bg-dark-custom" : "bg-light"}`}
+            style={{ borderRadius: "50%", width: "40px", height: "40px" }}
+          ></div>
+          <h6
             className={`h6 ${semiboldFont.className}`}
-            style={{ marginLeft: "12px", textDecoration: "none" }}
+            style={{ marginLeft: "12px" }}
           >
-            {coin.name}
+            Loading...
             <span
               className={`body ${mediumFont.className}`}
               style={{
@@ -42,9 +33,9 @@ const WatchlistCard = ({ coin, theme }: CommonComponentProps) => {
                 marginLeft: "4px",
               }}
             >
-              {coin.symbol}
+                Loading...
             </span>
-          </Link>
+          </h6>
         </Col>
       </Row>
       <Row className="mt-3">
@@ -55,14 +46,14 @@ const WatchlistCard = ({ coin, theme }: CommonComponentProps) => {
           Coin Price
         </span>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <h6 className={`h6 ${semiboldFont.className}`}>${coin.price}</h6>
+          <h6 className={`h6 ${semiboldFont.className}`}>Loading...</h6>
           <h6
             className={`h6 ${semiboldFont.className}`}
             style={{
-              color: coin.changes >= 0 ? "#479F76" : "#FF4F4F",
+              color: true? "#479F76" : "#FF4F4F",
             }}
           >
-            {`${coin.changes > 0 ? "+" : ""} ${coin.changes}%`}
+            {`${true? "+" : ""} 1%`}
           </h6>
         </div>
       </Row>
@@ -70,4 +61,4 @@ const WatchlistCard = ({ coin, theme }: CommonComponentProps) => {
   );
 };
 
-export default WatchlistCard;
+export default WatchlistCardShimmer;

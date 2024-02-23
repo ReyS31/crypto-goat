@@ -1,14 +1,12 @@
-"use client";
-
 import MarketTable from "@/components/MarketTable";
 import TopGainerContainer from "@/components/TopGainerContainer";
 import TrendingContainer from "@/components/TrendingContainer";
 import WatchlistContainer from "@/components/WatchlistContainer";
-import { useTheme } from "next-themes";
+import getTheme from "@/lib/getTheme";
 import { Col, Container, Row } from "react-bootstrap";
 
 export default function MarketNoSsr() {
-  const { theme } = useTheme();
+  const theme = getTheme();
   return (
     <main
       className={`py-3 px-5 ${
