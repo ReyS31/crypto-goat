@@ -1,9 +1,23 @@
+import ChartContainer from "@/components/ChartContainer";
+import CoinInfoCointainer from "@/components/CoinInfoContainer";
+import TopGainerContainer from "@/components/TopGainerContainer";
+import TrendingContainer from "@/components/TrendingContainer";
+import getTheme from "@/lib/getTheme";
 import { prisma } from "@/lib/prisma";
-import MarketCoinNoSsr from "@/pages/MarketCoinNoSsr";
+// import MarketCoinNoSsr from "@/pages/MarketCoinNoSsr";
 import { CoinGeckoMetadata } from "@/types";
 import { getServerSession } from "next-auth";
 import { unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
+import {
+  Container,
+  Breadcrumb,
+  BreadcrumbItem,
+  Alert,
+  Row,
+  Col,
+  Stack,
+} from "react-bootstrap";
 
 async function getCoin(coin: string): Promise<CoinGeckoMetadata> {
   const cryptoDB = await prisma.coin.findFirst({
@@ -49,7 +63,43 @@ export default async function CoinMarket({
     redirect("/");
   }
 
-  const coinMetadata: CoinGeckoMetadata = await getCoin(params.coin);
+  const coin: CoinGeckoMetadata = await getCoin(params.coin);
+  const theme = await getTheme();
+  return (
+    <main
+      className={`py-3 px-5 ${
+        theme === "dark"
+          ? "bg-dark-custom text-white"
+          : "bg-white-custom text-custom"
+      }`}
+      style={{ minHeight: "100vh" }}
+    >
+      <Container fluid>
+        <Breadcrumb>
+          <BreadcrumbItem href="/market">Market</BreadcrumbItem>
+          <BreadcrumbItem active>{coin.name}</BreadcrumbItem>
+        </Breadcrumb>
 
-  return <MarketCoinNoSsr coin={coinMetadata} />;
+        {coin.public_notice && (
+          <Alert variant={theme}>
+            <p dangerouslySetInnerHTML={{ __html: coin.public_notice }}></p>
+          </Alert>
+        )}
+
+        {/* <WatchlistContainer theme={theme ?? "light"} /> */}
+        <Row className="mt-4">
+          <Col xs={12} md={9}>
+            <ChartContainer coin={coin} theme={theme ?? "light"} />
+          </Col>
+          <Col md={3}>
+            <Stack gap={3}>
+              <CoinInfoCointainer theme={theme} coin={coin} />
+              <TrendingContainer theme={theme ?? "light"} />
+              <TopGainerContainer theme={theme ?? "light"} />
+            </Stack>
+          </Col>
+        </Row>
+      </Container>
+    </main>
+  );
 }

@@ -18,7 +18,7 @@ async function main() {
     .then(() =>
       prisma.coin.upsert({
         where: {
-          symbol: "TRON",
+          symbol: "TRX",
         },
         update: {},
         create: {

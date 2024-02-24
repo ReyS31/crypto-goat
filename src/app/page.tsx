@@ -10,7 +10,7 @@ export default async function Home() {
     return redirect("/market");
   }
 
-  const theme = getTheme();
+  const theme = await getTheme();
 
   return <SignInNoSsr theme={theme}></SignInNoSsr>;
 }
