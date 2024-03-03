@@ -55,7 +55,10 @@ const WatchlistCard = ({ coin, theme }: CommonComponentProps) => {
           Coin Price
         </span>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <h6 className={`h6 ${semiboldFont.className}`}>${coin.price}</h6>
+          <h6 className={`h6 ${semiboldFont.className}`}>{new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(coin.price)}</h6>
           <h6
             className={`h6 ${semiboldFont.className}`}
             style={{

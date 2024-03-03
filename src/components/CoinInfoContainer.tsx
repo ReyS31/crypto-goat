@@ -167,7 +167,16 @@ const CoinInfoCointainer = ({ theme, coin }: CoinInfoCointainerProps) => {
             color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
           }}
         >
-          By CoinGecko
+          By{" "}
+          <Link
+            href="https://www.coingecko.com/"
+            target="_blank"
+            style={{
+              color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
+            }}
+          >
+            CoinGecko
+          </Link>
         </span>
       </Stack>
     </Container>

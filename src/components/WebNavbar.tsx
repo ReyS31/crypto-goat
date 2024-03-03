@@ -70,6 +70,9 @@ export default function WebNavbar({ theme }: { theme: string }) {
 
           <Image
             src={theme === "dark" ? "/sun_toggle.svg" : "/moon_toggle.svg"}
+            style={{
+              cursor: "pointer"
+            }}
             alt="Theme Switcher"
             width={20}
             height={20}

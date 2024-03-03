@@ -55,7 +55,12 @@ const CoinBlock = ({ coin, theme }: CoinBlockProps) => {
           alignItems: "end",
         }}
       >
-        <span className={`sub1 ${semiboldFont.className}`}>${coin.price}</span>
+        <span className={`sub1 ${semiboldFont.className}`}>
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(coin.price)}
+        </span>
         <PercentageTag size="sub1" changes={coin.changes} font={semiboldFont} />
       </Col>
     </Row>
