@@ -30,7 +30,7 @@ const MarketTable = ({ theme }: MarketTableProps) => {
                 color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
               }}
             >
-              See whats happen now of the market
+              See whats happening in the market
             </p>
           </div>
           <div></div>

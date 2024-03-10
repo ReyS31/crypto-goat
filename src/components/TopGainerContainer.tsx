@@ -17,7 +17,7 @@ async function getCoin(): Promise<Coin[]> {
             Accept: "*/*",
           },
           next: {
-            revalidate: 60 * 30,
+            revalidate: 60,
           },
         }
       )

@@ -99,15 +99,13 @@ const CoinInfoCointainer = ({ theme, coin }: CoinInfoCointainerProps) => {
           </span>
         </Stack>
 
-        {/* Total Suppy */}
+        {/* Total Supply */}
         <Stack direction="horizontal">
           <span className={`sub2 ${mediumFont.className}`} style={fontStyle}>
             Total Suppy
           </span>
           <span className={`sub2 ${mediumFont.className} ms-auto`}>
-            {new Intl.NumberFormat("de-DE", {
-              maximumSignificantDigits: 3,
-            }).format(coin.market_data.total_supply)}{" "}
+            {new Intl.NumberFormat("de-DE").format(coin.market_data.total_supply)}{" "}
             {coin.symbol.toUpperCase()}
           </span>
         </Stack>
@@ -119,9 +117,7 @@ const CoinInfoCointainer = ({ theme, coin }: CoinInfoCointainerProps) => {
           </span>
           <span className={`sub2 ${mediumFont.className} ms-auto`}>
             {coin.market_data.max_supply
-              ? new Intl.NumberFormat("de-DE", {
-                  maximumSignificantDigits: 3,
-                }).format(coin.market_data.max_supply)
+              ? new Intl.NumberFormat("de-DE").format(coin.market_data.max_supply)
               : "~"}{" "}
             {coin.symbol.toUpperCase()}
           </span>

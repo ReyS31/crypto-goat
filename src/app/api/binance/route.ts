@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { NextRequest } from "next/server";
 
 type LongShortRatioRes = {
@@ -51,11 +52,33 @@ export async function GET(req: NextRequest) {
 
   const period = timeRange === "1d" ? "1h" : "1d";
 
-  const response: LongShortRatioRes[] = 
-  await fetch(
-    `https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${coin}USDT&period=${period}&limit=${limit}`,
-    requestOptions
-  ).then((response) => response.json());
+  const getCached = unstable_cache(
+    async (coin: string, period, limit) =>
+      fetch(
+        `https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${coin}USDT&period=${period}&limit=${limit}`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+          next: {
+            revalidate: 60,
+          },
+        }
+      )
+        .then((response) => {
+          console.log("from binance server");
+          return response.json();
+        })
+        .catch((error) => console.error(error)),
+    [`chart-long-short-${coin}-${period}-${limit}`]
+  );
+  const response: LongShortRatioRes[] = await getCached(coin, period, limit);
+
+  // const response: LongShortRatioRes[] =
+  // await fetch(
+  //   `https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${coin}USDT&period=${period}&limit=${limit}`,
+  //   requestOptions
+  // ).then((response) => response.json());
 
   const labels: string[] =
     timeRange === "1d"
@@ -90,11 +113,13 @@ export async function GET(req: NextRequest) {
   const short: number[] = [];
 
   response.forEach((item) => {
-    long.push(Number(item.longAccount));
-    short.push(Number(item.shortAccount));
+    long.push(Number(item.longAccount)*100);
+    short.push(Number(item.shortAccount) * 100);
     if (timeRange !== "1d") {
       const date = new Date(item.timestamp);
-      labels.push((date.getMonth() + 1).toString() + "-" + date.getDate().toString());
+      labels.push(
+        (date.getMonth() + 1).toString() + "-" + date.getDate().toString()
+      );
     }
   });
 

@@ -1,13 +1,18 @@
-version: '3.1'
+version: "3.1"
 
 services:
-  db:
-    image: postgres
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - DATABASE_URL=${DATABASE_URL}
     environment:
-      POSTGRES_PASSWORD: example
-      PGDATA: /var/lib/postgresql/data/PGDATA
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
     ports:
-      - 5432:5432
-    volumes:
-      - ./db/data:/var/lib/postgresql/data
-    restart: always
+      - ${PORT}:${PORT}
+    env_file:
+      - .env

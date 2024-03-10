@@ -11,8 +11,14 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FormSelect, Spinner, Stack } from "react-bootstrap";
+import {
+  Button,
+  ButtonGroup,
+  Spinner,
+  Stack,
+} from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 
 ChartJS.register(
@@ -41,9 +47,13 @@ export default function BarChart({
     responsive: true,
     scales: {
       x: {
+        min:0,
+        max:100,
         stacked: true,
       },
       y: {
+        min:0,
+        max:100,
         stacked: true,
       },
     },
@@ -76,22 +86,13 @@ export default function BarChart({
         <div className="p-2">{coin.name}</div>
         <div
           className="p-2 ms-auto"
-          // onClick={() => (loading ? {} : setTime("7d"))}
         >
-          <FormSelect
-            style={{
-              background: theme === "dark" ? "#0D0D0D" : "#FFFFFF",
-              color: theme !== "dark" ? "#0D0D0D" : "#FFFFFF",
-            }}
-            disabled={loading}
-            value={time}
-            onChange={(e) => setTime(e.target.value as ChartTimeRange)}
-          >
-            <option value={"1d"}>1d</option>
-            <option value={"7d"}>7d</option>
-            <option value={"14d"}>14d</option>
-            <option value={"30d"}>30d</option>
-          </FormSelect>
+          <ButtonGroup>
+            <Button variant={theme} disabled={loading} onClick={() => setTime("1d")} active={time==="1d"}>1d</Button>
+            <Button variant={theme} disabled={loading} onClick={() => setTime("7d")} active={time==="7d"}>7d</Button>
+            <Button variant={theme} disabled={loading} onClick={() => setTime("14d")} active={time==="14d"}>14d</Button>
+            <Button variant={theme} disabled={loading} onClick={() => setTime("30d")} active={time==="30d"}>30d</Button>
+          </ButtonGroup>
         </div>
       </Stack>
       <Stack gap={2} className="mx-auto">
@@ -114,7 +115,17 @@ export default function BarChart({
             color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
           }}
         >
-          By Binance
+          By 
+          {" "}
+          <Link
+            href="https://binance.com/"
+            target="_blank"
+            style={{
+              color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
+            }}
+          >
+            Binance
+          </Link>
         </span>
       </Stack>
     </>
