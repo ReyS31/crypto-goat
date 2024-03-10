@@ -140,7 +140,7 @@ export default function CoinInfoHeader({ coin, theme }: CoinInfoHeaderProps) {
               color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
             }}
           >
-            Circullating Supply
+            Circulating Supply
           </h6>
           <h5 className={`h5 ${semiboldFont.className}`}>
             {new Intl.NumberFormat("de-DE").format(
