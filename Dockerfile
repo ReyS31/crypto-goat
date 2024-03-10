@@ -19,7 +19,9 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json ./
-RUN npm i
+
+RUN npm intall
+
 RUN npm ci
 
 

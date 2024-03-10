@@ -1,25 +1,15 @@
 import ChartContainer from "@/components/ChartContainer";
 import CoinInfoCointainer from "@/components/CoinInfoContainer";
 import CoinInfoHeader from "@/components/CoinInfoHeader";
-import PercentageTag from "@/components/PercentageTag";
+import MarketTable from "@/components/MarketTable";
 import TopGainerContainer from "@/components/TopGainerContainer";
 import TrendingContainer from "@/components/TrendingContainer";
 import { getCoin } from "@/lib/coinApi";
 import getTheme from "@/lib/getTheme";
 import { CoinGeckoMetadata } from "@/types";
-import { semiboldFont } from "@/utils/fonts";
 import { getServerSession } from "next-auth";
-import Image from "next/image";
 import { redirect } from "next/navigation";
-import {
-  Container,
-  Breadcrumb,
-  BreadcrumbItem,
-  Alert,
-  Row,
-  Col,
-  Stack,
-} from "react-bootstrap";
+import { Container, Alert, Row, Col, Stack } from "react-bootstrap";
 
 export default async function CoinMarket({
   params,
@@ -43,10 +33,35 @@ export default async function CoinMarket({
       style={{ minHeight: "100vh" }}
     >
       <Container fluid>
-        <Breadcrumb>
-          <BreadcrumbItem href="/market">Market</BreadcrumbItem>
-          <BreadcrumbItem active>{coin.name ?? coin.symbol}</BreadcrumbItem>
-        </Breadcrumb>
+        <nav aria-label="breadcrumb">
+          <ol
+            className="breadcrumb"
+            style={{
+              color: "#121F3E",
+            }}
+          >
+            <li className="breadcrumb-item">
+              <a
+                href="#"
+                style={{
+                  textDecoration: "none",
+                  color: "#121F3E",
+                }}
+              >
+                Market
+              </a>
+            </li>
+            <li
+              className="breadcrumb-item"
+              aria-current="page"
+              style={{
+                color: "#121F3E80",
+              }}
+            >
+              {coin.name ?? coin.symbol}
+            </li>
+          </ol>
+        </nav>
 
         {coin.public_notice && (
           <Alert variant={theme}>
@@ -57,6 +72,11 @@ export default async function CoinMarket({
           <Col xs={12} md={9}>
             <CoinInfoHeader theme={theme} coin={coin} />
             <ChartContainer coin={coin} theme={theme ?? "light"} />
+            <MarketTable
+              theme={theme ?? "light"}
+              symbol={coin.symbol.toUpperCase()}
+              className="mt-4"
+            />
           </Col>
           <Col md={3}>
             <Stack gap={3}>

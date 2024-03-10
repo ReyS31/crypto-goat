@@ -72,7 +72,7 @@ export default function CoinInfoHeader({ coin, theme }: CoinInfoHeaderProps) {
         style={{
           width: "100%",
           justifyContent: "space-between",
-          background: "#0D0D0D",
+          background: theme === "dark" ? "#0D0D0D" : "#FFFFFF",
           borderRadius: "12px",
         }}
       >
@@ -80,7 +80,7 @@ export default function CoinInfoHeader({ coin, theme }: CoinInfoHeaderProps) {
           <h6
             className={`h6 ${semiboldFont.className} mb-4`}
             style={{
-              color: "#C1CEED80",
+              color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
             }}
           >
             Market Cap
@@ -105,7 +105,7 @@ export default function CoinInfoHeader({ coin, theme }: CoinInfoHeaderProps) {
           <h6
             className={`h6 ${semiboldFont.className} mb-4`}
             style={{
-              color: "#C1CEED80",
+              color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
             }}
           >
             Fully Diluted
@@ -121,7 +121,7 @@ export default function CoinInfoHeader({ coin, theme }: CoinInfoHeaderProps) {
           <h6
             className={`h6 ${semiboldFont.className} mb-4`}
             style={{
-              color: "#C1CEED80",
+              color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
             }}
           >
             Volume
@@ -137,7 +137,7 @@ export default function CoinInfoHeader({ coin, theme }: CoinInfoHeaderProps) {
           <h6
             className={`h6 ${semiboldFont.className} mb-4`}
             style={{
-              color: "#C1CEED80",
+              color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
             }}
           >
             Circullating Supply

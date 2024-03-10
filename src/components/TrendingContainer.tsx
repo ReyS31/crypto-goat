@@ -2,46 +2,8 @@ import { Coin } from "@/types";
 import { mediumFont, semiboldFont } from "@/utils/fonts";
 import { Container, Stack } from "react-bootstrap";
 import CoinBlock from "./CoinBlock";
-import { unstable_cache } from "next/cache";
-import coinList from "@/lib/coinList";
 import Link from "next/link";
-
-async function getCoin(): Promise<Coin[]> {
-  const getCached = unstable_cache(
-    async () =>
-      fetch(
-        `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=200&convert=USD&sort=market_cap&sort_dir=desc&cryptocurrency_type=coins&tag=all`,
-        {
-          headers: {
-            "X-CMC_PRO_API_KEY": "45594347-fe54-4e9d-8383-712853bc6f94",
-            Accept: "*/*",
-          },
-          next: {
-            revalidate: 60,
-          },
-        }
-      )
-        .then((response) => {
-          console.log("from main server");
-          return response.json();
-        })
-        .catch((error) => console.error(error)),
-    ["component", "top-gainer"]
-  );
-  const data = await getCached();
-
-  const filtered = data.data
-    .filter((raw: any) => coinList.includes(raw["symbol"]))
-    .map((raw: any) => ({
-      changes: raw["quote"]["USD"]["percent_change_24h"],
-      name: raw["name"],
-      price: raw["quote"]["USD"]["price"],
-      symbol: raw["symbol"],
-    }))
-    .slice(0, 5);
-
-  return filtered;
-}
+import { getTrendingCoin } from "@/lib/coinApi";
 
 type TrendingContainerProps = {
   theme: string;
@@ -53,7 +15,7 @@ const TrendingContainer = async ({ theme }: TrendingContainerProps) => {
     background: theme === "dark" ? "#0D0D0D" : "#FFFFFF",
   };
 
-  const watchlistCoins: Coin[] = await getCoin();
+  const watchlistCoins: Coin[] = await getTrendingCoin();
 
   return (
     <Container fluid style={containerClass} className="p-4">

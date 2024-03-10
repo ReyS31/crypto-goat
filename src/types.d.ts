@@ -22,12 +22,6 @@ export type FontSize =
   | "sub2";
 export type ChartTimeRange = "1d" | "7d" | "14d" | "30d";
 
-// To parse this data:
-//
-//   import { Convert } from "./file";
-//
-//   const coinGeckoMetadata = Convert.toCoinGeckoMetadata(json);
-
 export type CoinGeckoMetadata = {
   id: string;
   symbol: string;
@@ -264,3 +258,14 @@ export type Market = {
 };
 
 export type TrustScore = "green" | "yellow";
+
+export type CoinExchange = {
+  symbol: string;
+  name: string;
+  price: number;
+  percent_change_1h: number;
+  percent_change_24h: number;
+  percent_change_7d: number;
+  volume_24h: number;
+  market_cap: number;
+};

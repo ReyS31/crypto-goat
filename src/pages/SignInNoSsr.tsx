@@ -32,7 +32,7 @@ export default function SignInNoSsr({theme}: {theme:string}) {
           ? "bg-dark-custom text-white"
           : "bg-white-custom text-custom"
       }`}
-      style={{ minHeight: "100vh" }}
+      style={{ height: "92.6vh" }}
     >
       <Stack className="col-md-5 m-auto mt-5">
         <Container
