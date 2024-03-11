@@ -1,12 +1,9 @@
-"use server";
 import { semiboldFont } from "@/utils/fonts";
 import Link from "next/link";
 import { Col, Row } from "react-bootstrap";
 import WatchlistCard from "./WatchlistCard";
 import { Coin } from "@/types";
 import { getWatchlist } from "@/lib/coinApi";
-import { cookies } from "next/headers";
-import { cache } from "react";
 
 type WatchlistContainerProps = {
   theme: string;
