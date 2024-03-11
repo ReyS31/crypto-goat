@@ -1,6 +1,6 @@
 import { semiboldFont, mediumFont } from "@/utils/fonts";
 import Image from "next/image";
-import { Container, Row } from "react-bootstrap";
+import { Container, Row, Stack } from "react-bootstrap";
 import PercentageTag from "./PercentageTag";
 import { getExchange } from "@/lib/coinApi";
 import Link from "next/link";
@@ -153,6 +153,26 @@ const MarketTable = async ({
           </tbody>
         </table>
       </Row>
+
+      <Stack direction="horizontal" className="mt-3">
+        <span
+          className={`sub2 ${mediumFont.className} ms-auto`}
+          style={{
+            color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
+          }}
+        >
+          By{" "}
+          <Link
+            href="https://coinmarketcap.com/"
+            target="_blank"
+            style={{
+              color: theme === "dark" ? "#C1CEED80" : "#121F3E80",
+            }}
+          >
+            CoinMarketCap
+          </Link>
+        </span>
+      </Stack>
     </Container>
   );
 };

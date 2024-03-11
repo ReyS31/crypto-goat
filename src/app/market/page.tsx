@@ -6,7 +6,7 @@ import WatchlistContainer from "@/components/WatchlistContainer";
 import getTheme from "@/lib/getTheme";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Stack } from "react-bootstrap";
 
 export default async function Market() {
   const session = await getServerSession();
@@ -30,8 +30,10 @@ export default async function Market() {
             <MarketTable theme={theme ?? "light"} />
           </Col>
           <Col md={3}>
-            <TrendingContainer theme={theme ?? "light"} />
-            <TopGainerContainer theme={theme ?? "light"} />
+            <Stack gap={3}>
+              <TrendingContainer theme={theme ?? "light"} />
+              <TopGainerContainer theme={theme ?? "light"} />
+            </Stack>
           </Col>
         </Row>
       </Container>

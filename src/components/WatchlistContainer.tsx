@@ -4,6 +4,7 @@ import { Col, Row } from "react-bootstrap";
 import WatchlistCard from "./WatchlistCard";
 import { Coin } from "@/types";
 import WatchlistCardShimmer from "./Shimmer/WatchListCardShimmer";
+import { getWatchlist } from "@/lib/coinApi";
 
 type WatchlistContainerProps = {
   theme: string;
@@ -29,39 +30,8 @@ const WatchlistContainer = ({ theme }: WatchlistContainerProps) => {
   );
 };
 
-const WatchlistRow = ({ theme }: WatchlistContainerProps) => {
-  const watchlistCoins: Coin[] = [
-    {
-      changes: 12,
-      name: "Bitcoin",
-      price: 20000,
-      symbol: "BTC",
-    },
-    {
-      changes: 0,
-      name: "Ethereum",
-      price: 29100,
-      symbol: "ETH",
-    },
-    {
-      changes: -8,
-      name: "Binance",
-      price: 20000,
-      symbol: "BNB",
-    },
-    {
-      changes: -2,
-      name: "Flamingo",
-      price: 20000,
-      symbol: "FLM",
-    },
-    {
-      changes: 12,
-      name: "Solana",
-      price: 20000,
-      symbol: "SOL",
-    },
-  ];
+const WatchlistRow = async ({ theme }: WatchlistContainerProps) => {
+  const watchlistCoins: Coin[] = await getWatchlist();
 
   return (
     <Row className="mt-2">

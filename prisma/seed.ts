@@ -424,6 +424,7 @@ async function main() {
         password,
         watchList: {
           create: {
+            isPrimary: true,
             title: "Example",
             coinOnWatchList: {
               create: {
