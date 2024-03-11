@@ -1,10 +1,11 @@
-import { unstable_cache } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { prisma } from "./prisma";
-import { Coin, CoinExchange, CoinGeckoMetadata } from "@/types";
+import { Coin, CoinExchange, CoinGeckoMetadata, Metadata } from "@/types";
 import coinList from "./coinList";
-import { getServerSession } from "next-auth";
+import { Session, getServerSession } from "next-auth";
+import { cookies } from "next/headers";
 
-export async function getCoin(coin: string): Promise<CoinGeckoMetadata> {
+export async function getCoin(coin: string): Promise<Metadata> {
   const cryptoDB = await prisma.coin.findFirst({
     where: {
       symbol: coin.toUpperCase(),
@@ -35,9 +36,28 @@ export async function getCoin(coin: string): Promise<CoinGeckoMetadata> {
     }
   );
 
+  let is_on_watchlist = false;
+  const watchListId = await getPrimaryWatchlistId((await getServerSession())!);
+  if (watchListId) {
+    const exists = await prisma.watchList.findFirst({
+      where: {
+        id: watchListId,
+        coinOnWatchList: {
+          some: {
+            coin: {
+              symbol: coin.toUpperCase(),
+            },
+          },
+        },
+      },
+    });
+
+    is_on_watchlist = !!exists;
+  }
+
   const data = await getCached(cryptoDB?.coingecko_id!);
 
-  return data;
+  return { ...data, is_on_watchlist };
 }
 
 const getCachedTopGainer = unstable_cache(
@@ -142,50 +162,28 @@ export async function getWatchlist(): Promise<Coin[]> {
     return [];
   }
 
-  const getCachedSymbol = unstable_cache(
-    async () => {
-      const user = await prisma.user.findUnique({
+  const getCachedSymbol = unstable_cache(async () => {
+    const watchListId = await getPrimaryWatchlistId(session);
+
+    if (!watchListId) {
+      return [];
+    }
+    return (
+      await prisma.coinsOnWatchLists.findMany({
         where: {
-          email: session.user!.email!,
+          watchListId: watchListId,
         },
         include: {
-          watchList: true,
+          coin: true,
         },
-      });
-
-      const watchlistRaw = user?.watchList;
-
-      let watchlist = watchlistRaw?.find((wl) => wl.isPrimary);
-      if (!watchlist) {
-        watchlist = watchlistRaw![0];
-      }
-
-      if (!watchlist) {
-        return [];
-      }
-
-      const coins = (
-        await prisma.coinsOnWatchLists.findMany({
-          where: {
-            watchListId: watchlist.id,
+        orderBy: {
+          coin: {
+            name: "asc",
           },
-          include: {
-            coin: true,
-          },
-          orderBy: {
-            coin: {
-              name: "asc",
-            },
-          },
-        })
-      ).map((c) => c.coin.symbol);
-      return coins;
-    },
-    ["component", "watchlist"],
-    {
-      revalidate: 60,
-    }
-  );
+        },
+      })
+    ).map((c) => c.coin.symbol);
+  }, ["component", "watchlist"]);
 
   const coinSymbols = await getCachedSymbol();
 
@@ -201,3 +199,119 @@ export async function getWatchlist(): Promise<Coin[]> {
 
   return data;
 }
+
+const getPrimaryWatchlistId = unstable_cache(
+  async (session: Session) => {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user!.email!,
+      },
+      include: {
+        watchList: true,
+      },
+    });
+
+    const watchlistRaw = user?.watchList;
+
+    let watchlist = watchlistRaw?.find((wl) => wl.isPrimary);
+    if (!watchlist) {
+      watchlist = watchlistRaw![0];
+    }
+
+    if (!watchlist) {
+      return null;
+    }
+
+    return watchlist.id;
+  },
+  ["primary-watchlist-id"]
+);
+
+export const getAllCoins = unstable_cache(async () => {
+  return await prisma.coin.findMany({});
+}, ["coins-db"]);
+
+export const addToWatchlist = async (formData: FormData) => {
+  "use server";
+  const symbol = formData.get("symbol") as string;
+  const add = formData.get("status") === "add";
+
+  if (!symbol) {
+    return;
+  }
+
+  const watchListId = await getPrimaryWatchlistId((await getServerSession())!);
+  if (!watchListId) {
+    return;
+  }
+
+  const exists = await prisma.watchList.findFirst({
+    where: {
+      id: watchListId,
+      coinOnWatchList: {
+        some: {
+          coin: {
+            symbol: symbol,
+          },
+        },
+      },
+    },
+    include: {
+      coinOnWatchList: {
+        where: {
+          coin: {
+            symbol: symbol,
+          },
+        },
+      },
+    },
+  });
+
+  if (add) {
+    await prisma.watchList.update({
+      where: {
+        id: watchListId,
+      },
+      data: {
+        coinOnWatchList: {
+          create: {
+            coin: {
+              connect: {
+                symbol: symbol,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    revalidateTag("watchlist");
+    revalidateTag("component");
+    revalidatePath(`/market`);
+    return;
+  }
+
+  const coinWatchlist = exists!.coinOnWatchList[0];
+  if (!coinWatchlist) {
+    return;
+  }
+
+  await prisma.watchList.update({
+    where: {
+      id: watchListId,
+    },
+    data: {
+      coinOnWatchList: {
+        delete: {
+          watchListId_coinId: {
+            coinId: coinWatchlist.coinId,
+            watchListId: watchListId,
+          },
+        },
+      },
+    },
+  });
+  revalidateTag("watchlist");
+  revalidateTag("component");
+  revalidatePath(`/market`);
+};

@@ -1,11 +1,12 @@
 import { semiboldFont } from "@/utils/fonts";
-import { Col, Row, Stack } from "react-bootstrap";
+import { Button, Col, Row, Stack } from "react-bootstrap";
 import PercentageTag from "./PercentageTag";
 import Image from "next/image";
-import { CoinGeckoMetadata } from "@/types";
+import { Metadata } from "@/types";
+import { addToWatchlist } from "@/lib/coinApi";
 
 type CoinInfoHeaderProps = {
-  coin: CoinGeckoMetadata;
+  coin: Metadata;
   theme: string;
 };
 
@@ -62,6 +63,38 @@ export default function CoinInfoHeader({ coin, theme }: CoinInfoHeaderProps) {
                 font={semiboldFont}
               />
             </div>
+          </Stack>
+        </Col>
+        <Col xs={12} md={6}>
+          <Stack
+            direction="vertical"
+            style={{
+              alignContent: "end",
+              alignItems: "end",
+            }}
+          >
+            <form action={addToWatchlist}>
+              <input
+                type="hidden"
+                name="symbol"
+                value={coin.symbol.toUpperCase()}
+              />
+              {coin.is_on_watchlist ? (
+                <>
+                  <input type="hidden" name="status" value="remove" />
+                  <Button variant="outline-danger" type="submit">
+                    Remove from watchlist
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <input type="hidden" name="status" value="add" />
+                  <Button variant="outline-primary" type="submit">
+                    Add to watchlist
+                  </Button>
+                </>
+              )}
+            </form>
           </Stack>
         </Col>
       </Row>

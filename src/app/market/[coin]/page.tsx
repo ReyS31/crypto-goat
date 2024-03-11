@@ -6,7 +6,7 @@ import TopGainerContainer from "@/components/TopGainerContainer";
 import TrendingContainer from "@/components/TrendingContainer";
 import { getCoin } from "@/lib/coinApi";
 import getTheme from "@/lib/getTheme";
-import { CoinGeckoMetadata } from "@/types";
+import { CoinGeckoMetadata, Metadata } from "@/types";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Container, Alert, Row, Col, Stack } from "react-bootstrap";
@@ -21,7 +21,7 @@ export default async function CoinMarket({
     redirect("/");
   }
 
-  const coin: CoinGeckoMetadata = await getCoin(params.coin);
+  const coin: Metadata = await getCoin(params.coin);
   const theme = await getTheme();
   return (
     <main
@@ -42,7 +42,7 @@ export default async function CoinMarket({
           >
             <li className="breadcrumb-item">
               <a
-                href="#"
+                href="/market"
                 style={{
                   textDecoration: "none",
                   color: "#121F3E",

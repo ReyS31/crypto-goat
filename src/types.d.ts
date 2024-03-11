@@ -54,6 +54,10 @@ export type CoinGeckoMetadata = {
   ico_data?: IcoData;
 };
 
+export type Metadata = CoinGeckoMetadata & {
+  is_on_watchlist: boolean;
+};
+
 export type Tion = {
   en: string;
   de: string;

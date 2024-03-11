@@ -1,10 +1,12 @@
+"use server";
 import { semiboldFont } from "@/utils/fonts";
 import Link from "next/link";
 import { Col, Row } from "react-bootstrap";
 import WatchlistCard from "./WatchlistCard";
 import { Coin } from "@/types";
-import WatchlistCardShimmer from "./Shimmer/WatchListCardShimmer";
 import { getWatchlist } from "@/lib/coinApi";
+import { cookies } from "next/headers";
+import { cache } from "react";
 
 type WatchlistContainerProps = {
   theme: string;
@@ -38,20 +40,6 @@ const WatchlistRow = async ({ theme }: WatchlistContainerProps) => {
       {watchlistCoins.map((coin) => (
         <Col key={coin.symbol}>
           <WatchlistCard coin={coin} theme={theme} />
-        </Col>
-      ))}
-    </Row>
-  );
-};
-
-const WatchlistRowShimmer = ({ theme }: WatchlistContainerProps) => {
-  const length = Array.from(Array(4).keys());
-
-  return (
-    <Row className="mt-2">
-      {length.map((num) => (
-        <Col key={num}>
-          <WatchlistCardShimmer theme={theme} />
         </Col>
       ))}
     </Row>
