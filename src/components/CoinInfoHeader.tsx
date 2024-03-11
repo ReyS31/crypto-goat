@@ -1,16 +1,22 @@
+"use client";
+
 import { semiboldFont } from "@/utils/fonts";
 import { Button, Col, Row, Stack } from "react-bootstrap";
 import PercentageTag from "./PercentageTag";
 import Image from "next/image";
 import { Metadata } from "@/types";
-import { addToWatchlist } from "@/lib/coinApi";
 
 type CoinInfoHeaderProps = {
   coin: Metadata;
   theme: string;
+  addToWatchlist: ((formData: FormData) => void) ;
 };
 
-export default function CoinInfoHeader({ coin, theme }: CoinInfoHeaderProps) {
+export default function CoinInfoHeader({
+  coin,
+  theme,
+  addToWatchlist,
+}: CoinInfoHeaderProps) {
   return (
     <>
       <Row className="mb-3">

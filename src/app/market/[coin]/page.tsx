@@ -4,7 +4,7 @@ import CoinInfoHeader from "@/components/CoinInfoHeader";
 import MarketTable from "@/components/MarketTable";
 import TopGainerContainer from "@/components/TopGainerContainer";
 import TrendingContainer from "@/components/TrendingContainer";
-import { getCoin } from "@/lib/coinApi";
+import { addToWatchlist, getCoin } from "@/lib/coinApi";
 import getTheme from "@/lib/getTheme";
 import { CoinGeckoMetadata, Metadata } from "@/types";
 import { getServerSession } from "next-auth";
@@ -70,7 +70,11 @@ export default async function CoinMarket({
         )}
         <Row className="mt-4">
           <Col xs={12} md={9}>
-            <CoinInfoHeader theme={theme} coin={coin} />
+            <CoinInfoHeader
+              theme={theme}
+              coin={coin}
+              addToWatchlist={addToWatchlist}
+            />
             <ChartContainer coin={coin} theme={theme ?? "light"} />
             <MarketTable
               theme={theme ?? "light"}
