@@ -60,7 +60,7 @@ export default function WebNavbar({ theme }: { theme: string }) {
             Market
           </NavLink>
           <NavLink
-            href="#action2"
+            href="/watchlist"
             className={`d-inline-block sub1 ${regularFont.className} ${
               theme === "dark" ? "text-white" : "text-custom"
             }`}

@@ -1,10 +1,11 @@
+import addToWatchlist from "@/actions/addToWatchlist";
 import ChartContainer from "@/components/ChartContainer";
 import CoinInfoCointainer from "@/components/CoinInfoContainer";
 import CoinInfoHeader from "@/components/CoinInfoHeader";
 import MarketTable from "@/components/MarketTable";
 import TopGainerContainer from "@/components/TopGainerContainer";
 import TrendingContainer from "@/components/TrendingContainer";
-import { addToWatchlist, getCoin } from "@/lib/coinApi";
+import { getCoin } from "@/lib/coinApi";
 import getTheme from "@/lib/getTheme";
 import { CoinGeckoMetadata, Metadata } from "@/types";
 import { getServerSession } from "next-auth";

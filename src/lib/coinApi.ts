@@ -146,12 +146,11 @@ export async function getExchange(symbol: string): Promise<CoinExchange[]> {
         .filter((raw: any) => raw["symbol"] == coin.symbol)
         .at(0);
       if (datum) {
-        console.log(datum["ma"]);
         return {
           rank: datum["cmc_rank"],
-          name: datum["name"],
+          name: coin.name,
           price: datum["quote"][symbol]["price"],
-          symbol: datum["symbol"],
+          symbol: coin.symbol,
           market_cap: datum["quote"][symbol]["market_cap"],
           volume_24h: datum["quote"][symbol]["volume_24h"],
           percent_change_1h: datum["quote"][symbol]["percent_change_1h"],
@@ -217,9 +216,9 @@ export async function getWatchlist(): Promise<Coin[]> {
       if (datum) {
         return {
           changes: datum["quote"]["USD"]["percent_change_24h"],
-          name: datum["name"],
+          name: coin.name,
           price: datum["quote"]["USD"]["price"],
-          symbol: datum["symbol"],
+          symbol: coin.symbol,
         };
       }
 
@@ -235,7 +234,75 @@ export async function getWatchlist(): Promise<Coin[]> {
   return filtered;
 }
 
-const getPrimaryWatchlistId = unstable_cache(
+export async function getWatchlistTable(): Promise<CoinExchange[]> {
+  const session = await getServerSession();
+  if (!session) {
+    return [];
+  }
+
+  const getCachedSymbol = unstable_cache(async () => {
+    const watchListId = await getPrimaryWatchlistId(session);
+
+    if (!watchListId) {
+      return [];
+    }
+    return (
+      await prisma.coinsOnWatchLists.findMany({
+        where: {
+          watchListId: watchListId,
+        },
+        include: {
+          coin: true,
+        },
+        orderBy: {
+          coin: {
+            name: "asc",
+          },
+        },
+      })
+    ).map((c) => c.coin);
+  }, ["component", "watchlist"]);
+
+  const coinSymbols = await getCachedSymbol();
+
+  const data = await getCachedTopGainer("USD");
+  const filtered = coinSymbols
+    .map((coin): CoinExchange => {
+      const datum = data
+        .filter((raw: any) => raw["symbol"] == coin.symbol)
+        .at(0);
+      if (datum) {
+        return {
+          rank: datum["cmc_rank"],
+          name: coin.name,
+          price: datum["quote"]["USD"]["price"],
+          symbol: coin.symbol,
+          market_cap: datum["quote"]["USD"]["market_cap"],
+          volume_24h: datum["quote"]["USD"]["volume_24h"],
+          percent_change_1h: datum["quote"]["USD"]["percent_change_1h"],
+          percent_change_24h: datum["quote"]["USD"]["percent_change_24h"],
+          percent_change_7d: datum["quote"]["USD"]["percent_change_7d"],
+        };
+      }
+
+      return {
+        name: coin.name,
+        price: undefined,
+        symbol: coin.symbol,
+        market_cap: undefined,
+        volume_24h: undefined,
+        percent_change_1h: undefined,
+        percent_change_24h: undefined,
+        percent_change_7d: undefined,
+        rank: 10000,
+      };
+    })
+    .sort((a: CoinExchange, b: CoinExchange) => a.rank - b.rank);
+
+  return filtered;
+}
+
+export const getPrimaryWatchlistId = unstable_cache(
   async (session: Session) => {
     const user = await prisma.user.findUnique({
       where: {
@@ -265,88 +332,3 @@ const getPrimaryWatchlistId = unstable_cache(
 export const getAllCoins = unstable_cache(async () => {
   return await prisma.coin.findMany({});
 }, ["coins-db"]);
-
-export const addToWatchlist = async (formData: FormData) => {
-  "use server";
-  const symbol = formData.get("symbol") as string;
-  const add = formData.get("status") === "add";
-
-  if (!symbol) {
-    return;
-  }
-
-  const watchListId = await getPrimaryWatchlistId((await getServerSession())!);
-  if (!watchListId) {
-    return;
-  }
-
-  const exists = await prisma.watchList.findFirst({
-    where: {
-      id: watchListId,
-      coinOnWatchList: {
-        some: {
-          coin: {
-            symbol: symbol,
-          },
-        },
-      },
-    },
-    include: {
-      coinOnWatchList: {
-        where: {
-          coin: {
-            symbol: symbol,
-          },
-        },
-      },
-    },
-  });
-
-  if (add) {
-    await prisma.watchList.update({
-      where: {
-        id: watchListId,
-      },
-      data: {
-        coinOnWatchList: {
-          create: {
-            coin: {
-              connect: {
-                symbol: symbol,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    revalidateTag("watchlist");
-    revalidateTag("component");
-    revalidatePath(`/market`);
-    return;
-  }
-
-  const coinWatchlist = exists!.coinOnWatchList[0];
-  if (!coinWatchlist) {
-    return;
-  }
-
-  await prisma.watchList.update({
-    where: {
-      id: watchListId,
-    },
-    data: {
-      coinOnWatchList: {
-        delete: {
-          watchListId_coinId: {
-            coinId: coinWatchlist.coinId,
-            watchListId: watchListId,
-          },
-        },
-      },
-    },
-  });
-  revalidateTag("watchlist");
-  revalidateTag("component");
-  revalidatePath(`/market`);
-};
