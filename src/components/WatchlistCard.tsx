@@ -3,6 +3,7 @@ import { semiboldFont, mediumFont } from "@/utils/fonts";
 import Image from "next/image";
 import Link from "next/link";
 import { Container, Row, Col } from "react-bootstrap";
+import NotApplicable from "./NotApplicable";
 
 const WatchlistCard = ({ coin, theme }: CommonComponentProps) => {
   return (
@@ -55,18 +56,26 @@ const WatchlistCard = ({ coin, theme }: CommonComponentProps) => {
           Coin Price
         </span>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <h6 className={`h6 ${semiboldFont.className}`}>{new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(coin.price)}</h6>
-          <h6
-            className={`h6 ${semiboldFont.className}`}
-            style={{
-              color: coin.changes >= 0 ? "#479F76" : "#FF4F4F",
-            }}
-          >
-            {`${coin.changes > 0 ? "+" : ""} ${coin.changes}%`}
-          </h6>
+          {coin.price ? (
+            <>
+              <h6 className={`h6 ${semiboldFont.className}`}>
+                {new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(coin.price)}
+              </h6>
+              <h6
+                className={`h6 ${semiboldFont.className}`}
+                style={{
+                  color: coin.changes! >= 0 ? "#479F76" : "#FF4F4F",
+                }}
+              >
+                {`${coin.changes! > 0 ? "+" : ""} ${coin.changes}%`}
+              </h6>
+            </>
+          ) : (
+            <NotApplicable font={semiboldFont} size="h6" />
+          )}
         </div>
       </Row>
     </Container>

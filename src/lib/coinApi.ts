@@ -93,7 +93,7 @@ export async function getTopGainerCoin(): Promise<Coin[]> {
       price: raw["quote"]["USD"]["price"],
       symbol: raw["symbol"],
     }))
-    .sort((a: Coin, b: Coin) => b.changes - a.changes)
+    .sort((a: Coin, b: Coin) => (b.changes ?? 0) - (a.changes ?? 0))
     .slice(0, 5);
 
   return filtered;
@@ -138,20 +138,41 @@ export async function getExchange(symbol: string): Promise<CoinExchange[]> {
     }
   );
 
-  const filtered: CoinExchange[] = (await getCached(symbol)).data
-    .filter((raw: any) => coinList.includes(raw["symbol"]))
-    .map(
-      (raw: any): CoinExchange => ({
-        name: raw["name"],
-        price: raw["quote"][symbol]["price"],
-        symbol: raw["symbol"],
-        market_cap: raw["quote"][symbol]["market_cap"],
-        volume_24h: raw["quote"][symbol]["volume_24h"],
-        percent_change_1h: raw["quote"][symbol]["percent_change_1h"],
-        percent_change_24h: raw["quote"][symbol]["percent_change_24h"],
-        percent_change_7d: raw["quote"][symbol]["percent_change_7d"],
-      })
-    );
+  const data = (await getCached(symbol)).data;
+  const dbCoins = await getAllCoins();
+  const filtered: CoinExchange[] = dbCoins
+    .map((coin): CoinExchange => {
+      const datum = data
+        .filter((raw: any) => raw["symbol"] == coin.symbol)
+        .at(0);
+      if (datum) {
+        console.log(datum["ma"]);
+        return {
+          rank: datum["cmc_rank"],
+          name: datum["name"],
+          price: datum["quote"][symbol]["price"],
+          symbol: datum["symbol"],
+          market_cap: datum["quote"][symbol]["market_cap"],
+          volume_24h: datum["quote"][symbol]["volume_24h"],
+          percent_change_1h: datum["quote"][symbol]["percent_change_1h"],
+          percent_change_24h: datum["quote"][symbol]["percent_change_24h"],
+          percent_change_7d: datum["quote"][symbol]["percent_change_7d"],
+        };
+      }
+
+      return {
+        name: coin.name,
+        price: undefined,
+        symbol: coin.symbol,
+        market_cap: undefined,
+        volume_24h: undefined,
+        percent_change_1h: undefined,
+        percent_change_24h: undefined,
+        percent_change_7d: undefined,
+        rank: 10000,
+      };
+    })
+    .sort((a: CoinExchange, b: CoinExchange) => a.rank - b.rank);
 
   return filtered;
 }
@@ -182,22 +203,36 @@ export async function getWatchlist(): Promise<Coin[]> {
           },
         },
       })
-    ).map((c) => c.coin.symbol);
+    ).map((c) => c.coin);
   }, ["component", "watchlist"]);
 
   const coinSymbols = await getCachedSymbol();
 
-  const data = (await getCachedTopGainer("USD")).data
-    .filter((raw: any) => coinSymbols.includes(raw["symbol"]))
-    .map((raw: any) => ({
-      changes: raw["quote"]["USD"]["percent_change_24h"],
-      name: raw["name"],
-      price: raw["quote"]["USD"]["price"],
-      symbol: raw["symbol"],
-    }))
+  const data = await getCachedTopGainer("USD");
+  const filtered = coinSymbols
+    .map((coin): Coin => {
+      const datum = data.data
+        .filter((raw: any) => raw["symbol"] == coin.symbol)
+        .at(0);
+      if (datum) {
+        return {
+          changes: datum["quote"]["USD"]["percent_change_24h"],
+          name: datum["name"],
+          price: datum["quote"]["USD"]["price"],
+          symbol: datum["symbol"],
+        };
+      }
+
+      return {
+        changes: undefined,
+        name: coin.name,
+        price: undefined,
+        symbol: coin.symbol,
+      };
+    })
     .slice(0, 5);
 
-  return data;
+  return filtered;
 }
 
 const getPrimaryWatchlistId = unstable_cache(

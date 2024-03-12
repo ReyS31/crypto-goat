@@ -4,6 +4,7 @@ import { Container, Row, Stack } from "react-bootstrap";
 import PercentageTag from "./PercentageTag";
 import { getExchange } from "@/lib/coinApi";
 import Link from "next/link";
+import NotApplicable from "./NotApplicable";
 
 type MarketTableProps = {
   theme: string;
@@ -100,30 +101,48 @@ const MarketTable = async ({
                   </Link>
                 </td>
                 <td className={`h6 ${mediumFont.className}`}>
-                  {symbol === "USD"
-                    ? formatter.format(coin.price)
-                    : `${formatter.format(coin.price)} ${symbol.toUpperCase()}`}
+                  {coin.price ? (
+                    symbol === "USD" ? (
+                      formatter.format(coin.price)
+                    ) : (
+                      `${formatter.format(coin.price)} ${symbol.toUpperCase()}`
+                    )
+                  ) : (
+                    <NotApplicable />
+                  )}
                 </td>
                 <td>
-                  <PercentageTag
-                    size="h6"
-                    changes={coin.percent_change_1h}
-                    font={mediumFont}
-                  />
+                  {coin.percent_change_1h ? (
+                    <PercentageTag
+                      size="h6"
+                      changes={coin.percent_change_1h}
+                      font={mediumFont}
+                    />
+                  ) : (
+                    <NotApplicable size="h6" font={mediumFont} />
+                  )}
                 </td>
                 <td>
-                  <PercentageTag
-                    size="h6"
-                    changes={coin.percent_change_24h}
-                    font={mediumFont}
-                  />
+                  {coin.percent_change_24h ? (
+                    <PercentageTag
+                      size="h6"
+                      changes={coin.percent_change_24h}
+                      font={mediumFont}
+                    />
+                  ) : (
+                    <NotApplicable size="h6" font={mediumFont} />
+                  )}
                 </td>
                 <td>
-                  <PercentageTag
-                    size="h6"
-                    changes={coin.percent_change_7d}
-                    font={mediumFont}
-                  />
+                  {coin.percent_change_7d ? (
+                    <PercentageTag
+                      size="h6"
+                      changes={coin.percent_change_7d}
+                      font={mediumFont}
+                    />
+                  ) : (
+                    <NotApplicable size="h6" font={mediumFont} />
+                  )}
                 </td>
                 <td>
                   <div
@@ -133,20 +152,32 @@ const MarketTable = async ({
                     }}
                   >
                     <span className={`sub6 ${mediumFont.className}`}>
-                      {symbol === "USD"
-                        ? formatter.format(coin.volume_24h)
-                        : `${formatter.format(
+                      {coin.volume_24h ? (
+                        symbol === "USD" ? (
+                          formatter.format(coin.volume_24h)
+                        ) : (
+                          `${formatter.format(
                             coin.volume_24h
-                          )} ${symbol.toUpperCase()}`}
+                          )} ${symbol.toUpperCase()}`
+                        )
+                      ) : (
+                        <NotApplicable />
+                      )}
                     </span>
                   </div>
                 </td>
                 <td className={`sub6 ${mediumFont.className}`}>
-                  {symbol === "USD"
-                    ? formatter.format(coin.market_cap)
-                    : `${formatter.format(
+                  {coin.market_cap ? (
+                    symbol === "USD" ? (
+                      formatter.format(coin.market_cap)
+                    ) : (
+                      `${formatter.format(
                         coin.market_cap
-                      )} ${symbol.toUpperCase()}`}
+                      )} ${symbol.toUpperCase()}`
+                    )
+                  ) : (
+                    <NotApplicable />
+                  )}
                 </td>
               </tr>
             ))}

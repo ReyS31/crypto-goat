@@ -1,8 +1,8 @@
 export type Coin = {
   symbol: string;
   name: string;
-  changes: number;
-  price: number;
+  changes: number | undefined;
+  price: number | undefined;
 };
 
 export type CommonComponentProps = {
@@ -266,10 +266,11 @@ export type TrustScore = "green" | "yellow";
 export type CoinExchange = {
   symbol: string;
   name: string;
-  price: number;
-  percent_change_1h: number;
-  percent_change_24h: number;
-  percent_change_7d: number;
-  volume_24h: number;
-  market_cap: number;
+  price: number | undefined;
+  percent_change_1h: number | undefined;
+  percent_change_24h: number | undefined;
+  percent_change_7d: number | undefined;
+  volume_24h: number | undefined;
+  market_cap: number | undefined;
+  rank: number;
 };
