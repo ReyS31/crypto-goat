@@ -59,9 +59,9 @@ const CoinBlock = ({ coin, theme }: CoinBlockProps) => {
           {new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
-          }).format(coin.price)}
+          }).format(coin.price!)}
         </span>
-        <PercentageTag size="sub1" changes={coin.changes} font={semiboldFont} />
+        <PercentageTag size="sub1" changes={coin.changes!} font={semiboldFont} />
       </Col>
     </Row>
   );
