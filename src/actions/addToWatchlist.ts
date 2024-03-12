@@ -60,6 +60,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
       revalidateTag("watchlist");
       revalidateTag("component");
       revalidatePath(`/market`);
+      revalidatePath(`/watchlist`);
       return;
     }
   
@@ -86,6 +87,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
     revalidateTag("watchlist");
     revalidateTag("component");
     revalidatePath(`/market`);
+    revalidatePath(`/watchlist`);
   };
   
   export default addToWatchlist;

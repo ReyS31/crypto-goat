@@ -265,7 +265,7 @@ export async function getWatchlistTable(): Promise<CoinExchange[]> {
 
   const coinSymbols = await getCachedSymbol();
 
-  const data = await getCachedTopGainer("USD");
+  const data = (await getCachedTopGainer("USD")).data;
   const filtered = coinSymbols
     .map((coin): CoinExchange => {
       const datum = data
