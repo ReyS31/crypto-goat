@@ -112,7 +112,7 @@ const MarketTable = async ({
                   )}
                 </td>
                 <td>
-                  {coin.percent_change_1h ? (
+                  {coin.percent_change_1h !== undefined ? (
                     <PercentageTag
                       size="h6"
                       changes={coin.percent_change_1h}
@@ -123,7 +123,7 @@ const MarketTable = async ({
                   )}
                 </td>
                 <td>
-                  {coin.percent_change_24h ? (
+                  {coin.percent_change_24h !== undefined ? (
                     <PercentageTag
                       size="h6"
                       changes={coin.percent_change_24h}
@@ -134,7 +134,7 @@ const MarketTable = async ({
                   )}
                 </td>
                 <td>
-                  {coin.percent_change_7d ? (
+                  {coin.percent_change_7d !== undefined ? (
                     <PercentageTag
                       size="h6"
                       changes={coin.percent_change_7d}
