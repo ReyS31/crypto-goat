@@ -22,6 +22,10 @@ export default async function CoinMarket({
     redirect("/");
   }
 
+  if(!params.coin) {
+    redirect("/market");
+  }
+
   const coin: Metadata = await getCoin(params.coin);
   const theme = await getTheme();
   return (
