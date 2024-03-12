@@ -125,7 +125,7 @@ export async function getExchange(symbol: string): Promise<CoinExchange[]> {
   const getCached = unstable_cache(
     async (symbol: string) =>
       fetch(
-        `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=200&convert=${symbol}&sort=market_cap&sort_dir=desc&cryptocurrency_type=all&tag=all`,
+        `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=400&convert=${symbol}&sort=market_cap&sort_dir=desc&cryptocurrency_type=all&tag=all`,
         {
           headers: {
             "X-CMC_PRO_API_KEY": "45594347-fe54-4e9d-8383-712853bc6f94",
