@@ -229,6 +229,7 @@ export async function getWatchlist(): Promise<Coin[]> {
         symbol: coin.symbol,
       };
     })
+    .sort((a: Coin, b: Coin) => (b.changes ?? 0) - (a.changes ?? 0))
     .slice(0, 5);
 
   return filtered;
