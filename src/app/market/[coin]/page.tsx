@@ -7,8 +7,9 @@ import TopGainerContainer from "@/components/TopGainerContainer";
 import TrendingContainer from "@/components/TrendingContainer";
 import { getCoin } from "@/lib/coinApi";
 import getTheme from "@/lib/getTheme";
-import { CoinGeckoMetadata, Metadata } from "@/types";
+import { Metadata } from "@/types";
 import { getServerSession } from "next-auth";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Container, Alert, Row, Col, Stack } from "react-bootstrap";
 
@@ -22,12 +23,19 @@ export default async function CoinMarket({
     redirect("/");
   }
 
-  if(!params.coin) {
-    redirect("/market");
+  let coin: Metadata | null = null;
+  try {
+    coin = await getCoin(params.coin);
+  } catch (error) {
+    revalidatePath(`/market/${params.coin}`);
   }
 
-  const coin: Metadata = await getCoin(params.coin);
   const theme = await getTheme();
+
+  if (!coin) {
+    redirect(`/market`);
+  }
+
   return (
     <main
       className={`py-3 px-5 ${
@@ -83,7 +91,7 @@ export default async function CoinMarket({
             <ChartContainer coin={coin} theme={theme ?? "light"} />
             <MarketTable
               theme={theme ?? "light"}
-              symbol={coin.symbol.toUpperCase()}
+              symbol={params.coin}
               className="mt-4"
             />
           </Col>

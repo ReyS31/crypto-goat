@@ -1,6 +1,6 @@
 import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { prisma } from "./prisma";
-import { Coin, CoinExchange, CoinGeckoMetadata, Metadata } from "@/types";
+import { Coin, CoinExchange, Metadata } from "@/types";
 import coinList from "./coinList";
 import { Session, getServerSession } from "next-auth";
 import { cookies } from "next/headers";
@@ -56,8 +56,16 @@ export async function getCoin(coin: string): Promise<Metadata> {
   }
 
   const data = await getCached(cryptoDB?.coingecko_id!);
+  if (data.symbol === undefined) {
+    revalidateTag("coin");
+    revalidateTag(cryptoDB?.id!);
+    revalidatePath(`/market/${coin}`);
 
-  return { ...data, is_on_watchlist };
+    console.log("REVALIDATE ERROR");
+
+    throw new Error("Exceed usage limit");
+  }
+  return { ...data, is_on_watchlist, is_error: false };
 }
 
 const getCachedTopGainer = unstable_cache(
