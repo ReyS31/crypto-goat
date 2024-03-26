@@ -3,7 +3,6 @@ import { prisma } from "./prisma";
 import { Coin, CoinExchange, Metadata } from "@/types";
 import coinList from "./coinList";
 import { Session, getServerSession } from "next-auth";
-import { cookies } from "next/headers";
 
 export async function getCoin(coin: string): Promise<Metadata> {
   const cryptoDB = await prisma.coin.findFirst({
@@ -18,8 +17,7 @@ export async function getCoin(coin: string): Promise<Metadata> {
         `https://api.coingecko.com/api/v3//coins/${coinGecokId}?localization=true&tickers=true&market_data=true&community_data=false&developer_data=false&sparkline=true`,
         {
           headers: {
-            Cookie:
-              "__cf_bm=cpajWUgWQcx3K9VreswMZaRngA2bGTUThjcdvJpH99Y-1708666680-1.0-AS6znZBreKSV6i2rXXsxkaEvPS7baQXmHRz+qWBGYfAiWI11a/JKNt9qcoAqHfHFVXUZNfHFGEatiAJVzwUyA/4=",
+            Cookie: `__cf_bm=${process.env.GC_API_KEY ?? ""}`,
           },
           next: {
             revalidate: 60,
@@ -74,7 +72,7 @@ const getCachedTopGainer = unstable_cache(
       `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=200&convert=${symbol}&sort=market_cap&sort_dir=desc&cryptocurrency_type=all&tag=all`,
       {
         headers: {
-          "X-CMC_PRO_API_KEY": "45594347-fe54-4e9d-8383-712853bc6f94",
+          "X-CMC_PRO_API_KEY": process.env.CMC_API_KEY ?? "",
           Accept: "*/*",
         },
         next: {
@@ -128,7 +126,7 @@ export async function getExchange(symbol: string): Promise<CoinExchange[]> {
         `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=400&convert=${symbol}&sort=market_cap&sort_dir=desc&cryptocurrency_type=all&tag=all`,
         {
           headers: {
-            "X-CMC_PRO_API_KEY": "45594347-fe54-4e9d-8383-712853bc6f94",
+            "X-CMC_PRO_API_KEY": process.env.CMC_API_KEY ?? "",
             Accept: "*/*",
           },
           next: {
